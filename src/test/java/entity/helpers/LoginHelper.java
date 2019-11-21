@@ -7,7 +7,7 @@ import io.restassured.http.Method;
 public class LoginHelper extends BaseHelper {
     private final String loginServiceURI = properties.getProperty("loginServiceURI");
 
-    public void loginPut(String login, String password, String contentType, String bodyType) {
+    public void loginPut(String login, Object password, String contentType, String bodyType) {
         request = new RequestBuilder();
         switch (contentType) {
             case "Корректный":
@@ -24,6 +24,7 @@ public class LoginHelper extends BaseHelper {
         }
         switch (bodyType) {
             case "Корректный":
+            case "Значение int вместо String":
                 request.withBody("login", login);
                 request.withBody("password", password);
                 break;
@@ -54,8 +55,9 @@ public class LoginHelper extends BaseHelper {
     }
 
     public void loginWithCredentials(String login, String password) {
-        if (login.equals("<Отсутствует>")) login = null;
-        if (password.equals("<Отсутствует>")) password = null;
+        if (login.equals("Пустой")) login = "";
+        if (password.equals("Некорректный")) password = "asjfansjfasfnsaf";
+        if (password.equals("Пустой")) password = "";
         loginPut(login, password, "Корректный", "Корректный");
     }
 
@@ -63,7 +65,7 @@ public class LoginHelper extends BaseHelper {
         loginPut(login, password, contentType, "Корректный");
     }
 
-    public void loginWithBodyType(String login, String password, String bodyType) {
+    public void loginWithBodyType(String login, Object password, String bodyType) {
         loginPut(login, password, "Корректный", bodyType);
     }
 
