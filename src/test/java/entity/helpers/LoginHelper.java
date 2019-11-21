@@ -54,44 +54,48 @@ public class LoginHelper extends BaseHelper {
         response = request.response();
     }
 
-    public void loginWithCredentials(String login, String password) {
+    public void loginPutWithCredentials(String login, String password) {
         if (login.equals("Пустой")) login = "";
         if (password.equals("Некорректный")) password = "asjfansjfasfnsaf";
         if (password.equals("Пустой")) password = "";
         loginPut(login, password, "Корректный", "Корректный");
     }
 
-    public void loginWithContentType(String login, String password, String contentType) {
+    public void loginPutWithContentType(String login, String password, String contentType) {
         loginPut(login, password, contentType, "Корректный");
     }
 
-    public void loginWithBodyType(String login, Object password, String bodyType) {
+    public void loginPutWithBodyType(String login, Object password, String bodyType) {
         loginPut(login, password, "Корректный", bodyType);
     }
 
 
-    public void loginPost(String cookie, Boolean isContentTypePresent, Boolean isJsonCorrect, Boolean isUserValid) {
-        logger.debug(String.format("Login POST with Cookie %s, ContentType: %b, JsonCorrect: %b, UserValid: %b",
-                cookie, isContentTypePresent, isJsonCorrect, isUserValid));
+    public void loginPost(String apiKey, String login, String password, String contentType, String apiKeyType, String bodyType) {
         request = new RequestBuilder();
-        if (cookie != null)
-            request.withHeader("Cookie", cookie);
-        if (isContentTypePresent != null)
-            if (isContentTypePresent)
-                request.withContentType();
-            else request.withHeader("Content-Type", "text/plain");
-        if (isJsonCorrect != null)
-            if (isJsonCorrect)
-                if (isUserValid)
-                    request.withBody("user_id", 3);
-                else
-                    request.withBody("user_id", "text");
-            else
-                request.withBody("invalid", "text");
-        else
-            request.withBody("", "");
+        switch (contentType) {
+            case "Корректный":
+                request.withHeader("Content-Type", "application/json");
+                break;
+        }
+        switch (apiKeyType) {
+            case "Корректный":
+                request.withHeader("Api-Key", apiKey);
+                break;
+        }
+        switch (bodyType) {
+            case "Корректный":
+                request.withBody("login", login);
+                request.withBody("password", password);
+        }
         request.withServiceUri(loginServiceURI).method(Method.POST).execute();
         response = request.response();
+    }
+
+    public void loginPostWithCredentials(String apiKey, String login, String password) {
+        if (login.equals("Пустой")) login = "";
+        if (password.equals("Некорректный")) password = "asjfansjfasfnsaf";
+        if (password.equals("Пустой")) password = "";
+        loginPost(apiKey, login, password, "Корректный", "Корректный", "Корректный");
     }
 
 

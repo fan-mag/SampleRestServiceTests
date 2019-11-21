@@ -1,5 +1,6 @@
 package entity.helpers;
 
+import entity.model.User;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 
@@ -20,6 +21,35 @@ public class DatabaseHelper {
 
     void disconnect() throws SQLException {
         connection.close();
+    }
+
+    public void addUser(User user) throws SQLException {
+        String query = String.format("INSERT INTO credentials " +
+                "(login, password, api_key, privilege) " +
+                "VALUES ('%s', '%s', %d, %d)",
+                user.login(), user.password(), user.apiKey(), user.privilege());
+        allureDatabaseAttachment(query);
+        Statement statement = connection.createStatement();
+        statement.execute(query);
+        statement.close();
+    }
+
+    public void deleteUser(User user) throws SQLException {
+        String query = String.format("DELETE FROM credentials WHERE login = '%s'", user.login());
+        allureDatabaseAttachment(query);
+        Statement statement = connection.createStatement();
+        statement.execute(query);
+        statement.close();
+    }
+
+    public Long getApiKey(User user) throws SQLException {
+        String query = String.format("SELECT api_key FROM credentials WHERE login = '%s'", user.login());
+        allureDatabaseAttachment(query);
+        ResultSet rs = connection.createStatement().executeQuery(query);
+        rs.next();
+        Long apiKey = rs.getLong("api_key");
+        rs.close();
+        return apiKey;
     }
 
     private ResultSet executeSel(String query) throws SQLException {

@@ -48,7 +48,7 @@ public class LoginPutTest extends BaseTest {
 
     @Test(dataProvider = "positiveProvider")
     public void positiveLoginTest(String user, String password, String expectedApiKey) {
-        app.auth().loginWithCredentials(user, password);
+        app.auth().loginPutWithCredentials(user, password);
 
         Assert.assertEquals(app.auth().response().statusCode(), 200);
 
@@ -57,7 +57,7 @@ public class LoginPutTest extends BaseTest {
 
     @Test(dataProvider = "credentialsProvider")
     public void differentCredentialsTest(String user, String password, int expectedStatusCode, String expectedErrorMessage) {
-        app.auth().loginWithCredentials(user, password);
+        app.auth().loginPutWithCredentials(user, password);
 
         Assert.assertEquals(app.auth().response().statusCode(), expectedStatusCode);
 
@@ -66,7 +66,7 @@ public class LoginPutTest extends BaseTest {
 
     @Test(dataProvider = "contentTypeProvider")
     public void differentContentTypeTest(String user, String password, String contentType, String expectedErrorMessage) {
-        app.auth().loginWithContentType(user, password, contentType);
+        app.auth().loginPutWithContentType(user, password, contentType);
 
         Assert.assertEquals(app.auth().response().statusCode(), 400);
 
@@ -75,7 +75,7 @@ public class LoginPutTest extends BaseTest {
 
     @Test(dataProvider = "bodyTypeProvider")
     public void differentBodyTypeTest(String user, Object password, String bodyType, int expectedStatusCode, String expectedErrorMessage) {
-        app.auth().loginWithBodyType(user, password, bodyType);
+        app.auth().loginPutWithBodyType(user, password, bodyType);
 
         Assert.assertEquals(app.auth().response().statusCode(), expectedStatusCode);
 
