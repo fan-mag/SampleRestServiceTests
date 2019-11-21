@@ -7,85 +7,66 @@ import io.restassured.http.Method;
 public class LoginHelper extends BaseHelper {
     private final String loginServiceURI = properties.getProperty("loginServiceURI");
 
-    public void loginPut(String login, String password, Boolean isContentTypePresent, Boolean isJsonValid) {
-        logger.debug(String.format("Login PUT with login %s, password %s, ContentType: %b, JsonValid: %b",
-                login, password, isContentTypePresent, isJsonValid));
+    public void loginPut(String login, String password, String contentType, String bodyType) {
         request = new RequestBuilder();
-        if (isJsonValid && login != null)
-            request.withBody("login", login);
-        if (isJsonValid && password != null)
-            request.withBody("password", password);
-        if (!isJsonValid)
-            request.withBody("notvalidjson", "failthis");
-        if (isContentTypePresent != null)
-            if (isContentTypePresent)
-                request.withContentType();
-            else
+        switch (contentType) {
+            case "Корректный":
+                request.withHeader("Content-Type", "application/json");
+                break;
+            case "Некорректный":
+                request.withHeader("Content-Type", "application/xml");
+                break;
+            case "Пустой":
                 request.withHeader("Content-Type", "text/plain");
+                break;
+            case "Отсутствует":
+                break;
+        }
+        switch (bodyType) {
+            case "Корректный":
+                request.withBody("login", login);
+                request.withBody("password", password);
+                break;
+            case "Без login":
+                request.withBody("password", password);
+                break;
+            case "Без password":
+                request.withBody("login", login);
+                break;
+            case "Пустой json":
+                request.withBody("{}");
+                break;
+            case "Пустой json массив":
+                request.withBody("[]");
+                break;
+            case "Формат не json":
+                request.withBody(String.format("{" +
+                        "\"login\":\"%s\"" +
+                        "\"password\":\"%s\"" +
+                        "}", login, password));
+                break;
+            case "Некорректные поля":
+                request.withBody("key", "value");
+                break;
+        }
         request.withServiceUri(loginServiceURI).method(Method.PUT).execute();
         response = request.response();
     }
 
-    public void login(String login, String password) {
+    public void loginWithCredentials(String login, String password) {
         if (login.equals("<Отсутствует>")) login = null;
         if (password.equals("<Отсутствует>")) password = null;
-        loginPut(login, password, true, true);
+        loginPut(login, password, "Корректный", "Корректный");
     }
 
     public void loginWithContentType(String login, String password, String contentType) {
-        Boolean isContentTypePresent = null;
-        if (!contentType.equals("<Отсутствует>"))
-            isContentTypePresent = contentType.equals("application/json");
-        loginPut(login, password, isContentTypePresent, true);
+        loginPut(login, password, contentType, "Корректный");
     }
 
-    public void loginWithJsonBody(String login, String password, String jsonBody) {
-        Boolean isJsonBodyPresent = null;
-        if (!jsonBody.equals("<Отсутствует>"))
-            isJsonBodyPresent = jsonBody.equals("Корректный");
-        loginPut(login, password, true, isJsonBodyPresent);
+    public void loginWithBodyType(String login, String password, String bodyType) {
+        loginPut(login, password, "Корректный", bodyType);
     }
 
-    public void loginDelete(String cookie) {
-        logger.debug(String.format("Login DELETE with Cookie %s", cookie));
-        request = new RequestBuilder();
-        if (!cookie.equals("<Отсутствует>"))
-            request.withHeader("Cookie", cookie);
-        request.withServiceUri(loginServiceURI).method(Method.DELETE).execute();
-        response = request.response();
-    }
-
-    public void loginGet(String cookie) {
-        logger.debug(String.format("Login GET with Cookie %s", cookie));
-        request = new RequestBuilder();
-        if (!cookie.equals("<Отсутствует>"))
-            request.withHeader("Cookie", cookie);
-        request.withServiceUri(loginServiceURI).method(Method.GET).execute();
-        response = request.response();
-    }
-
-    public void loginPostWithCookie(String cookie) {
-        loginPost(cookie, true, true, true);
-    }
-
-    public void loginPostWithUserId(String cookie, String validUserId) {
-        Boolean isUserIdValid = validUserId.equals("Корректный");
-        loginPost(cookie, true, true, isUserIdValid);
-    }
-
-    public void loginPost(String cookie, String contentType) {
-        Boolean isContentTypePresent = null;
-        if (!contentType.equals("<Отсутствует>"))
-            isContentTypePresent = contentType.equals("application/json");
-        loginPost(cookie, isContentTypePresent, true, true);
-    }
-
-    public void loginPostWithJson(String cookie, String jsonType) {
-        Boolean isJsonCorrect = null;
-        if (!jsonType.equals("Пустой"))
-            isJsonCorrect = !jsonType.equals("Некорректный");
-        loginPost(cookie, true, isJsonCorrect, true);
-    }
 
     public void loginPost(String cookie, Boolean isContentTypePresent, Boolean isJsonCorrect, Boolean isUserValid) {
         logger.debug(String.format("Login POST with Cookie %s, ContentType: %b, JsonCorrect: %b, UserValid: %b",
@@ -111,11 +92,5 @@ public class LoginHelper extends BaseHelper {
         response = request.response();
     }
 
-
-    public String authCookie(String login, String password) {
-        logger.debug(String.format("Getting cookie for login %s, password %s", login, password));
-        loginPut(login, password, true, true);
-        return response.getCookie();
-    }
 
 }

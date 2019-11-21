@@ -13,6 +13,10 @@ class BodyBuilder {
         return body.toString();
     }
 
+    String buildBody(String body) {
+        return body;
+    }
+
     private void buildBodyParam(String key, Object value) {
         if (value instanceof Number)
             body.addProperty(key, (Number) value);

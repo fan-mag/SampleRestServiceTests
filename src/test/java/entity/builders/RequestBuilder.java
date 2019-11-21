@@ -4,6 +4,9 @@ package entity.builders;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.config.EncoderConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.http.Headers;
 import io.restassured.http.Method;
@@ -26,11 +29,14 @@ public class RequestBuilder {
     private List<Header> headers = new ArrayList<>();
     private Map<String, Object> params = new HashMap<>();
     private Map<String, Object> body = new HashMap<>();
+    private String bodyPlain;
     private RequestSpecification builtSpecification;
     private ResponseHandler response;
+    private Boolean isBodyJson;
 
     public RequestBuilder(String baseUri) {
         this.baseUri = baseUri;
+
     }
 
     public RequestBuilder() {
@@ -73,18 +79,28 @@ public class RequestBuilder {
 
     public RequestBuilder withBody(String name, Object value) {
         body.put(name, value);
+        isBodyJson = true;
         return this;
     }
 
+    public RequestBuilder withBody(String plain) {
+        bodyPlain = plain;
+        isBodyJson = false;
+        return this;
+    }
 
     private RequestBuilder build() {
+        EncoderConfig encConfig = EncoderConfig.encoderConfig().encodeContentTypeAs("application/json", ContentType.TEXT);
+        RestAssuredConfig restConfig = RestAssured.config().encoderConfig(encConfig);
         Headers headers = new Headers(this.headers);
-        String body = new BodyBuilder().buildBody(this.body);
+        String body;
+        body = (isBodyJson) ? new BodyBuilder().buildBody(this.body) : new BodyBuilder().buildBody(bodyPlain);
         builtSpecification = given()
+                .config(restConfig)
                 .baseUri(baseUri)
                 .headers(headers)
                 .params(params);
-        if (method == Method.PUT || method == Method.POST)
+        if (method == Method.PUT || method == Method.POST || method == Method.DELETE)
             builtSpecification = builtSpecification.body(body);
         return this;
     }
