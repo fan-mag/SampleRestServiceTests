@@ -9,24 +9,15 @@ public class LoginHelper extends BaseHelper {
 
     public void loginPut(String login, Object password, String contentType, String bodyType) {
         request = new RequestBuilder();
-        switch (contentType) {
-            case "Корректный":
-                request.withHeader("Content-Type", "application/json");
-                break;
-            case "Некорректный":
-                request.withHeader("Content-Type", "application/xml");
-                break;
-            case "Пустой":
-                request.withHeader("Content-Type", "text/plain");
-                break;
-            case "Отсутствует":
-                break;
-        }
+        setContentType(contentType);
         switch (bodyType) {
             case "Корректный":
-            case "Значение int вместо String":
                 request.withBody("login", login);
                 request.withBody("password", password);
+                break;
+            case "Значение int вместо String":
+                request.withBody("login", login);
+                request.withBody("password", 3253253);
                 break;
             case "Без login":
                 request.withBody("password", password);
@@ -69,23 +60,40 @@ public class LoginHelper extends BaseHelper {
         loginPut(login, password, "Корректный", bodyType);
     }
 
-
-    public void loginPost(String apiKey, String login, String password, String contentType, String apiKeyType, String bodyType) {
+    public void loginPost(String apiKey, String login, Object password, String contentType, String apiKeyType, String bodyType) {
         request = new RequestBuilder();
-        switch (contentType) {
-            case "Корректный":
-                request.withHeader("Content-Type", "application/json");
-                break;
-        }
-        switch (apiKeyType) {
-            case "Корректный":
-                request.withHeader("Api-Key", apiKey);
-                break;
-        }
+        setContentType(contentType);
+        setApiKey(apiKeyType, apiKey);
         switch (bodyType) {
             case "Корректный":
                 request.withBody("login", login);
                 request.withBody("password", password);
+                break;
+            case "Значение int вместо String":
+                request.withBody("login", login);
+                request.withBody("password", 235253);
+                break;
+            case "Без login":
+                request.withBody("password", password);
+                break;
+            case "Без password":
+                request.withBody("login", login);
+                break;
+            case "Пустой json":
+                request.withBody("{}");
+                break;
+            case "Пустой json массив":
+                request.withBody("[]");
+                break;
+            case "Формат не json":
+                request.withBody(String.format("{" +
+                        "\"login\":\"%s\"" +
+                        "\"password\":\"%s\"" +
+                        "}", login, password));
+                break;
+            case "Некорректные поля":
+                request.withBody("key", "value");
+                break;
         }
         request.withServiceUri(loginServiceURI).method(Method.POST).execute();
         response = request.response();
@@ -99,4 +107,15 @@ public class LoginHelper extends BaseHelper {
     }
 
 
+    public void loginPostWithContentType(String apiKey, String login, String password, String contentType) {
+        loginPost(apiKey, login, password, contentType, "Корректный", "Корректный");
+    }
+
+    public void loginPostWithApiKey(String login, String password, String apiKeyType) {
+        loginPost("--/--", login, password, "Корректный", apiKeyType, "Корректный");
+    }
+
+    public void loginPostWithBodyType(String apiKey, String login, Object password, String bodyType) {
+        loginPost(apiKey, login, password, "Корректный", "Корректный", bodyType);
+    }
 }
