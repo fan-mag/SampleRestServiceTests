@@ -93,15 +93,16 @@ public class RequestBuilder {
         EncoderConfig encConfig = EncoderConfig.encoderConfig().encodeContentTypeAs("application/json", ContentType.TEXT);
         RestAssuredConfig restConfig = RestAssured.config().encoderConfig(encConfig);
         Headers headers = new Headers(this.headers);
-        String body;
-        body = (isBodyJson) ? new BodyBuilder().buildBody(this.body) : new BodyBuilder().buildBody(bodyPlain);
+
         builtSpecification = given()
                 .config(restConfig)
                 .baseUri(baseUri)
                 .headers(headers)
                 .params(params);
-        if (method == Method.PUT || method == Method.POST || method == Method.DELETE)
+        if (method == Method.PUT || method == Method.POST || method == Method.DELETE) {
+            String body = (isBodyJson) ? new BodyBuilder().buildBody(this.body) : new BodyBuilder().buildBody(bodyPlain);
             builtSpecification = builtSpecification.body(body);
+        }
         return this;
     }
 

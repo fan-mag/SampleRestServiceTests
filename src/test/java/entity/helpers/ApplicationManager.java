@@ -16,7 +16,8 @@ import java.util.Properties;
 public class ApplicationManager {
     private static final Properties properties = new Properties();
     private static final List<String> browsers = new ArrayList<>();
-    private LoginHelper login;
+    private LoginHelper loginHelper;
+    private PersonHelper personHelper;
     private DatabaseHelper db;
     private boolean isDebug = true;
     private User user, user2, operator;
@@ -45,7 +46,8 @@ public class ApplicationManager {
     public void init() throws IOException, SQLException, ClassNotFoundException, ParseException {
         properties.load(new FileReader("src/test/resources/testsuite.properties"));
         RestAssured.baseURI = (isDebug) ? property("debugBaseURI") : property("baseURI");
-        login = new LoginHelper();
+        loginHelper = new LoginHelper();
+        personHelper = new PersonHelper();
         db = new DatabaseHelper(property("databaseURI"), property("databaseDriver"));
         db.connect();
         user = new User()
@@ -88,17 +90,17 @@ public class ApplicationManager {
         db.deleteUser(operator);
     }
 
-    private void addPersonsToDatabase() throws SQLException {
+    private void addPersonsToDatabase() {
         personList.forEach(db::addPerson);
     }
 
-    private void deletePersonsFromDatabase() throws SQLException {
+    private void deletePersonsFromDatabase() {
         personList.forEach(db::deletePerson);
 
     }
 
     public LoginHelper auth() {
-        return login;
+        return loginHelper;
     }
 
     public void stop() throws SQLException {
@@ -116,4 +118,7 @@ public class ApplicationManager {
         return db;
     }
 
+    public PersonHelper person() {
+        return personHelper;
+    }
 }

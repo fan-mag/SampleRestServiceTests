@@ -1,9 +1,13 @@
 package entity.builders;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import entity.model.Person;
 import io.restassured.http.Header;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBodyData;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static java.lang.System.lineSeparator;
@@ -37,6 +41,12 @@ public class ResponseHandler {
 
     public ResponseBodyData getBody() {
         return response.getBody();
+    }
+
+    public List<Person> persons() {
+        String jsonString = getBody().asString();
+        Type itemsListType = new TypeToken<List<Person>>(){}.getType();
+        return new Gson().fromJson(jsonString, itemsListType);
     }
 
     @Override

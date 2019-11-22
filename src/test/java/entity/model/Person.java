@@ -1,5 +1,9 @@
 package entity.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -8,6 +12,7 @@ public class Person {
     private String surname;
     private String name;
     private String lastname;
+    @SerializedName("birthDate")
     private Date birthdate;
 
     public Person withId(Integer id) {
@@ -32,6 +37,11 @@ public class Person {
 
     public Person withBirthdate(Date birthdate) {
         this.birthdate = birthdate;
+        return this;
+    }
+
+    public Person withBirthdate(String birthdate) throws ParseException {
+        this.birthdate = new SimpleDateFormat().parse(birthdate);
         return this;
     }
 
@@ -60,10 +70,11 @@ public class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) &&
+        return Objects.equals(id, person.id) ||
                 Objects.equals(surname, person.surname) &&
-                Objects.equals(name, person.name) &&
-                Objects.equals(lastname, person.lastname);
+                        Objects.equals(name, person.name) &&
+                        Objects.equals(lastname, person.lastname) &&
+                        Objects.equals(birthdate, person.birthdate);
     }
 
     @Override

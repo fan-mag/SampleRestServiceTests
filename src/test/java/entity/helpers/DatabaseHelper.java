@@ -118,6 +118,8 @@ public class DatabaseHelper {
         if (name == null || name.equals("")) caseInput -= 2;
         if (lastname == null || lastname.equals("")) caseInput -= 1;
         switch (caseInput) {
+            case 0:
+                return String.format("SELECT * FROM person");
             case 1:
                 return String.format("SELECT * FROM person WHERE Отчество = '%s'", lastname);
             case 2:
@@ -132,9 +134,8 @@ public class DatabaseHelper {
                 return String.format("SELECT * FROM person WHERE Фамилия = '%s' AND Имя = '%s'", surname, name);
             case 7:
                 return String.format("SELECT * FROM person WHERE Фамилия = '%s' AND Имя = '%s' AND Отчество = '%s'", surname, name, lastname);
-            default:
-                return null;
         }
+        return "THIS CASE CAN'T HAPPEN";
     }
 
 
