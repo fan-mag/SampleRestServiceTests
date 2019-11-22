@@ -1,10 +1,13 @@
 package entity.helpers;
 
+import entity.model.Person;
 import entity.model.User;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper {
     private final String url;
@@ -25,8 +28,8 @@ public class DatabaseHelper {
 
     public void addUser(User user) throws SQLException {
         String query = String.format("INSERT INTO credentials " +
-                "(login, password, api_key, privilege) " +
-                "VALUES ('%s', '%s', %d, %d)",
+                        "(login, password, api_key, privilege) " +
+                        "VALUES ('%s', '%s', %d, %d)",
                 user.login(), user.password(), user.apiKey(), user.privilege());
         allureDatabaseAttachment(query);
         Statement statement = connection.createStatement();
@@ -42,6 +45,7 @@ public class DatabaseHelper {
         statement.close();
     }
 
+
     public Long getApiKey(User user) throws SQLException {
         String query = String.format("SELECT api_key FROM credentials WHERE login = '%s'", user.login());
         allureDatabaseAttachment(query);
@@ -52,31 +56,87 @@ public class DatabaseHelper {
         return apiKey;
     }
 
-    private ResultSet executeSel(String query) throws SQLException {
+    public Person getPerson(Integer id) throws SQLException {
+        String query = String.format("SELECT * FROM person WHERE id = %d", id);
         allureDatabaseAttachment(query);
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        rs.next();
-        return rs;
+        ResultSet rs = connection.createStatement().executeQuery(query);
+        Person person = null;
+        if (rs.next()) {
+            person = new Person()
+                    .withId(rs.getInt("id"))
+                    .withSurname(rs.getString("Фамилия"))
+                    .withName(rs.getString("Имя"))
+                    .withLastname(rs.getString("Отчество"))
+                    .withBirthdate(rs.getDate("Дата_рождения"));
+        }
+        return person;
     }
 
-    private void executeDel(String query) throws SQLException {
-        allureDatabaseAttachment(query);
-        Statement statement = connection.createStatement();
-        statement.execute(query);
-        statement.close();
+    public List<Person> getPerson(String surname, String name, String lastname) throws SQLException {
+        String query = buildQueryPerson(surname, name, lastname);
+        ResultSet rs = connection.createStatement().executeQuery(query);
+        List<Person> personList = new ArrayList<>();
+        while (rs.next()) {
+            personList.add(new Person()
+                    .withId(rs.getInt("id"))
+                    .withSurname(rs.getString("Фамилия"))
+                    .withName(rs.getString("Имя"))
+                    .withLastname(rs.getString("Отчество"))
+                    .withBirthdate(rs.getDate("Дата_рождения")));
+        }
+        return personList;
     }
 
-    private Integer executeAdd(String query) throws SQLException {
-        allureDatabaseAttachment(query);
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        rs.next();
-        Integer id = rs.getInt("id");
-        statement.close();
-        allureDatabaseAttachment(id);
-        return id;
+    void addPerson(Person person) {
+        String query = String.format("INSERT INTO person " +
+                        "(id, Фамилия, Имя, Отчество, Дата_рождения) " +
+                        "VALUES (DEFAULT, '%s', '%s', '%s', '%s') RETURNING id",
+                person.surname(), person.name(), person.lastname(), person.birthdate());
+        try (ResultSet rs = connection.createStatement().executeQuery(query);
+        ) {
+            rs.next();
+            person.withId(rs.getInt("id"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    void deletePerson(Person person) {
+        String query = String.format("DELETE FROM person " +
+                        "WHERE id = %d OR Фамилия = '%s' OR Имя = '%s' OR Отчество = '%s'",
+                person.id(), person.surname(), person.name(), person.lastname());
+        try {
+            connection.createStatement().execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String buildQueryPerson(String surname, String name, String lastname) {
+        int caseInput = 7;
+        if (surname == null || surname.equals("")) caseInput -= 4;
+        if (name == null || name.equals("")) caseInput -= 2;
+        if (lastname == null || lastname.equals("")) caseInput -= 1;
+        switch (caseInput) {
+            case 1:
+                return String.format("SELECT * FROM person WHERE Отчество = '%s'", lastname);
+            case 2:
+                return String.format("SELECT * FROM person WHERE Имя = '%s'", name);
+            case 3:
+                return String.format("SELECT * FROM person WHERE Имя = '%s' AND Отчество = '%s'", name, lastname);
+            case 4:
+                return String.format("SELECT * FROM person WHERE Фамилия = '%s'", surname);
+            case 5:
+                return String.format("SELECT * FROM person WHERE Фамилия = '%s' AND Отчество = '%s'", surname, lastname);
+            case 6:
+                return String.format("SELECT * FROM person WHERE Фамилия = '%s' AND Имя = '%s'", surname, name);
+            case 7:
+                return String.format("SELECT * FROM person WHERE Фамилия = '%s' AND Имя = '%s' AND Отчество = '%s'", surname, name, lastname);
+            default:
+                return null;
+        }
+    }
+
 
     @Step("Отправление SQL-запроса в БД")
     private void allureDatabaseAttachment(String query) {

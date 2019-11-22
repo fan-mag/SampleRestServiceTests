@@ -21,7 +21,7 @@ public class BaseHelper {
 
     void setApiKey(String apiKeyType, String apiKey) {
         switch (apiKeyType) {
-            case "Текстовый":
+            case "Текст":
                 request.withHeader("Api-Key", "текст");
                 break;
             case "Корректный":

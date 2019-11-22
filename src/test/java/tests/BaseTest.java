@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeSuite;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 
 public class BaseTest {
@@ -22,7 +23,7 @@ public class BaseTest {
     }
 
     @BeforeSuite
-    public void prepareTestSuite() throws IOException, SQLException, ClassNotFoundException {
+    public void prepareTestSuite() throws IOException, SQLException, ClassNotFoundException, ParseException {
         app = new ApplicationManager();
         app.init();
     }
