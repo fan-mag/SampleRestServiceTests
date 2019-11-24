@@ -7,7 +7,7 @@ import io.restassured.http.Method;
 public class LoginHelper extends BaseHelper {
     private final String loginServiceURI = properties.getProperty("loginServiceURI");
 
-    public void loginPut(String login, Object password, String contentType, String bodyType) {
+    private void loginPut(String login, Object password, String contentType, String bodyType) {
         request = new RequestBuilder();
         setContentType(contentType);
         switch (bodyType) {
@@ -60,7 +60,7 @@ public class LoginHelper extends BaseHelper {
         loginPut(login, password, "Корректный", bodyType);
     }
 
-    public void loginPost(String apiKey, String login, Object password, String contentType, String apiKeyType, String bodyType) {
+    private void loginPost(String apiKey, String login, Object password, String contentType, String apiKeyType, String bodyType) {
         request = new RequestBuilder();
         setContentType(contentType);
         setApiKey(apiKeyType, apiKey);

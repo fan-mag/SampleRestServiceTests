@@ -15,17 +15,12 @@ import java.util.Properties;
 
 public class ApplicationManager {
     private static final Properties properties = new Properties();
-    private static final List<String> browsers = new ArrayList<>();
     private LoginHelper loginHelper;
     private PersonHelper personHelper;
     private DatabaseHelper db;
     private boolean isDebug = true;
     private User user, user2, operator;
     private List<Person> personList = new ArrayList<>();
-
-    public List<String> browsers() {
-        return browsers;
-    }
 
     public User user() {
         return user;

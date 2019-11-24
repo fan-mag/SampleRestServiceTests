@@ -67,6 +67,19 @@ public class PersonHelper extends BaseHelper {
         request.withServiceUri(personServiceUri).method(Method.DELETE).execute();
         response = request.response();
     }
+
+    public void personPost(String apiKey, Object surname, Object name, Object lastname, Object birthdate, Object passport) {
+        request = new RequestBuilder();
+        setApiKey("Корректный", apiKey);
+        setContentType("Корректный");
+        request.withBody("surname", surname);
+        request.withBody("name", name);
+        request.withBody("lastname", lastname);
+        request.withBody("birthdate", birthdate);
+        request.withBody("passport", passport);
+        request.withServiceUri(personServiceUri).method(Method.POST).execute();
+        response = request.response();
+    }
 }
 
 

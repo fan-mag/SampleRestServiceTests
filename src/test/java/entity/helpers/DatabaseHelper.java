@@ -27,7 +27,7 @@ public class DatabaseHelper {
         connection.close();
     }
 
-    public void addUser(User user) throws SQLException {
+    void addUser(User user) throws SQLException {
         String query = String.format("INSERT INTO credentials " +
                         "(login, password, api_key, privilege) " +
                         "VALUES ('%s', '%s', %d, %d)",
@@ -40,13 +40,13 @@ public class DatabaseHelper {
 
     public void addPassport(Passport passport) throws SQLException {
         String query = String.format("INSERT INTO passport " +
-                "(id, person_id, Серия, Номер) " +
-                "VALUES (DEFAULT, '%s', %d, %d)",
+                        "(id, person_id, Серия, Номер) " +
+                        "VALUES (DEFAULT, '%s', %d, %d)",
                 passport.person().id(), passport.seria(), passport.number());
 
     }
 
-    public void deleteUser(User user) throws SQLException {
+    void deleteUser(User user) throws SQLException {
         String query = String.format("DELETE FROM credentials WHERE login = '%s'", user.login());
         allureDatabaseAttachment(query);
         Statement statement = connection.createStatement();
@@ -121,6 +121,23 @@ public class DatabaseHelper {
         }
     }
 
+    public void deletePerson(String surname, String name, String lastname) {
+        String query = String.format("DELETE FROM person " +
+                        "WHERE Фамилия = '%s' OR Имя = '%s' OR Отчество = '%s'",
+                surname, name, lastname);
+        try {
+            connection.createStatement().execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePassport(String seria, String number) throws SQLException {
+        String query = String.format("DELETE FROM passport WHERE seria = %d AND number = %d",
+                seria, number);
+        connection.createStatement().execute(query);
+    }
+
     private String buildQueryPerson(String surname, String name, String lastname) {
         int caseInput = 7;
         if (surname == null || surname.equals("")) caseInput -= 4;
@@ -157,5 +174,6 @@ public class DatabaseHelper {
     private void allureDatabaseAttachment(Integer result) {
         Allure.attachment("SQL-ответ", String.valueOf(result));
     }
+
 
 }
