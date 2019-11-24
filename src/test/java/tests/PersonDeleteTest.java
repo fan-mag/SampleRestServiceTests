@@ -24,6 +24,8 @@ public class PersonDeleteTest extends BaseTest {
                 {"operator", "operator", "Отсутствует", "Отсутствует", 25, "Отсутствует", "Отсутствует", 404, "No persons matched for your request"},
                 {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", 25, "Отсутствует", 404, "No persons matched for your request"},
                 {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует", "", 400, "Passport format must be in 0000-000000 format"},
+                {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует", "text-456789", 400, "Passport format must be in 0000-000000 format"},
+                {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует", "1234-txttxt", 400, "Passport format must be in 0000-000000 format"},
                 {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует", "123-456789", 400, "Passport format must be in 0000-000000 format"},
                 {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует", "1234-56789", 400, "Passport format must be in 0000-000000 format"},
                 {"operator", "operator", "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует", "12345-678901", 400, "Passport format must be in 0000-000000 format"},
