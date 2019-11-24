@@ -1,5 +1,6 @@
 package entity.helpers;
 
+import entity.model.Passport;
 import entity.model.Person;
 import entity.model.User;
 import io.qameta.allure.Allure;
@@ -35,6 +36,14 @@ public class DatabaseHelper {
         Statement statement = connection.createStatement();
         statement.execute(query);
         statement.close();
+    }
+
+    public void addPassport(Passport passport) throws SQLException {
+        String query = String.format("INSERT INTO passport " +
+                "(id, person_id, Серия, Номер) " +
+                "VALUES (DEFAULT, '%s', %d, %d)",
+                passport.person().id(), passport.seria(), passport.number());
+
     }
 
     public void deleteUser(User user) throws SQLException {

@@ -40,6 +40,33 @@ public class PersonHelper extends BaseHelper {
     public void personGetNoParams(String apiKey) {
         personGet("Корректный", apiKey, "Отсутствует", "Отсутствует", "Отсутствует", "Отсутствует");
     }
+
+    public void personDelete(String apiKey, Object id, Object surname, Object name, Object lastname, Object passport) {
+        request = new RequestBuilder();
+        setApiKey("Корректный", apiKey);
+        setContentType("Корректный");
+        if (!id.equals("Отсутствует"))
+            request.withBody("id", id);
+        if (!surname.equals("Отсутствует"))
+            request.withBody("surname", surname);
+        if (!name.equals("Отсутствует"))
+            request.withBody("name", name);
+        if (!lastname.equals("Отсутствует"))
+            request.withBody("lastname", lastname);
+        if (!passport.equals("Отсутствует"))
+            request.withBody("passport", passport);
+        request.withServiceUri(personServiceUri).method(Method.DELETE).execute();
+        response = request.response();
+    }
+
+    public void personDelete(String apiKey, String body) {
+        request = new RequestBuilder();
+        setApiKey("Корректный", apiKey);
+        setContentType("Корректный");
+        request.withBody(body);
+        request.withServiceUri(personServiceUri).method(Method.DELETE).execute();
+        response = request.response();
+    }
 }
 
 

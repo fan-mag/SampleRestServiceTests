@@ -27,7 +27,7 @@ public class PersonGetTest extends BaseTest {
         List<Person> expectedPersons = app.db().getPerson("", "", "");
         List<Person> actualPersons = app.person().response().persons();
 
-        Assert.assertEquals(expectedPersons, actualPersons);
+        Assert.assertEqualsNoOrder(expectedPersons.toArray(), actualPersons.toArray());
     }
 
 }

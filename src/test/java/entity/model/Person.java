@@ -1,6 +1,7 @@
 package entity.model;
 
 import com.google.gson.annotations.SerializedName;
+import cucumber.api.java.eo.Se;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,11 +9,12 @@ import java.util.Date;
 import java.util.Objects;
 
 public class Person {
+    @SerializedName("person_id")
     private Integer id;
     private String surname;
     private String name;
     private String lastname;
-    @SerializedName("birthDate")
+    @SerializedName("birthdate")
     private Date birthdate;
 
     public Person withId(Integer id) {

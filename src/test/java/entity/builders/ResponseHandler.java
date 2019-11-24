@@ -1,6 +1,7 @@
 package entity.builders;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import entity.model.Person;
 import io.restassured.http.Header;
@@ -46,7 +47,7 @@ public class ResponseHandler {
     public List<Person> persons() {
         String jsonString = getBody().asString();
         Type itemsListType = new TypeToken<List<Person>>(){}.getType();
-        return new Gson().fromJson(jsonString, itemsListType);
+        return new GsonBuilder().setDateFormat("dd.MM.yyyy").create().fromJson(jsonString, itemsListType);
     }
 
     @Override

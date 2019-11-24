@@ -32,7 +32,7 @@ public class RequestBuilder {
     private String bodyPlain;
     private RequestSpecification builtSpecification;
     private ResponseHandler response;
-    private Boolean isBodyJson;
+    private Boolean isBodyJson = true;
 
     public RequestBuilder(String baseUri) {
         this.baseUri = baseUri;
