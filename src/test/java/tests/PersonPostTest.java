@@ -1,6 +1,7 @@
 package tests;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -58,21 +59,6 @@ public class PersonPostTest extends BaseTest {
         Assert.assertEquals(app.person().response().statusCode(), expectedStatusCode);
 
         Assert.assertEquals(app.person().response().getBodyValue("message"), expectedMessage);
-    }
-
-    @BeforeMethod(onlyForGroups = {"clearPossibleCreations"})
-    public void deleteUserFromDatabase(Object[] testArgs) {
-        try {
-            String surname = (String) testArgs[2];
-            String name = (String) testArgs[3];
-            String lastname = (String) testArgs[4];
-            app.db().deletePerson(surname, name, lastname);
-            String seria = ((String) testArgs[6]).split("-")[0];
-            String number = ((String) testArgs[6]).split("-")[1];
-            app.db().deletePassport(seria, number);
-        } catch (Exception ignore) {
-
-        }
     }
 
 }

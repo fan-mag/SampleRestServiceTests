@@ -9,6 +9,7 @@ import io.qameta.allure.Step;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 public class DatabaseHelper {
     private final String url;
@@ -110,6 +111,15 @@ public class DatabaseHelper {
         }
     }
 
+
+    public void addPerson(Integer id) throws SQLException {
+        String query = String.format("INSERT INTO person " +
+                        "(id, Фамилия, Имя, Отчество, Дата_рождения) " +
+                        "VALUES (%d, 'QA_SURNAME_BEFORE', 'QA_NAME_BEFORE', 'QA_LASTNAME_BEFORE', '%s')",
+                id, new Date());
+        connection.createStatement().execute(query);
+    }
+
     void deletePerson(Person person) {
         String query = String.format("DELETE FROM person " +
                         "WHERE id = %d OR Фамилия = '%s' OR Имя = '%s' OR Отчество = '%s'",
@@ -125,6 +135,16 @@ public class DatabaseHelper {
         String query = String.format("DELETE FROM person " +
                         "WHERE Фамилия = '%s' OR Имя = '%s' OR Отчество = '%s'",
                 surname, name, lastname);
+        try {
+            connection.createStatement().execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePerson(Integer id) {
+        String query = String.format("DELETE FROM person " +
+                        "WHERE id = %d",  id);
         try {
             connection.createStatement().execute(query);
         } catch (SQLException e) {
@@ -174,6 +194,7 @@ public class DatabaseHelper {
     private void allureDatabaseAttachment(Integer result) {
         Allure.attachment("SQL-ответ", String.valueOf(result));
     }
+
 
 
 }

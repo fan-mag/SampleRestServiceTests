@@ -80,6 +80,20 @@ public class PersonHelper extends BaseHelper {
         request.withServiceUri(personServiceUri).method(Method.POST).execute();
         response = request.response();
     }
+
+    public void personPutWithParameters(String apiKey, Object id, Object surname, Object name, Object lastname, Object birthdate, Object passport) {
+        request = new RequestBuilder();
+        setApiKey("Корректный", apiKey);
+        setContentType("Корректный");
+        request.withBody("id", id);
+        request.withBody("surname", surname);
+        request.withBody("name", name);
+        request.withBody("lastname", lastname);
+        request.withBody("birthdate", birthdate);
+        request.withBody("passport", passport);
+        request.withServiceUri(personServiceUri).method(Method.PUT).execute();
+        response = request.response();
+    }
 }
 
 
