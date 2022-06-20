@@ -107,7 +107,7 @@
         <aspectj.version>1.8.10</aspectj.version>
         <allure-testng.version>2.6.0</allure-testng.version>
 
-        <kotlin.version>1.3.0</kotlin.version>
+        <kotlin.version>1.6.0</kotlin.version>
     </properties>
 
     <build>
